@@ -98,5 +98,8 @@ func clientCredentialsGrant(w http.ResponseWriter, r *http.Request,
 
 	tokenResponse(w, AccessToken{
 		tlv.Type(auth.T_TENANT): client.ID,
+		tlv.Type(auth.T_SCOPE): tlv.Values{
+			tlv.Type(auth.SCOPE_ADMIN): true,
+		},
 	})
 }
