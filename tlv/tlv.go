@@ -67,15 +67,15 @@ func (t Tag) Type() Type {
 }
 
 func (t *Tag) SetType(val Type) {
-	*t = Tag(val)<<3 | Tag(*t&0b111)
+	*t = Tag(val)<<3 | Tag(*t&0x7)
 }
 
 func (t Tag) VType() VType {
-	return VType(t & 0b111)
+	return VType(t & 0x7)
 }
 
 func (t *Tag) SetVType(val VType) {
-	*t = Tag(*t&^0b111) | Tag(val)
+	*t = Tag(*t&^0x7) | Tag(val)
 }
 
 func (t Tag) String() string {
@@ -225,7 +225,7 @@ func Unmarshal(data []byte) (Values, error) {
 }
 
 func marshalInt(val uint64, buf *bytes.Buffer) {
-	mask := uint64(0b01111111 << 28)
+	mask := uint64(0x7f << 28)
 
 	i := 4
 
@@ -242,7 +242,7 @@ func marshalInt(val uint64, buf *bytes.Buffer) {
 		masked := val & mask
 		masked >>= uint64(i * 7)
 		if i > 0 {
-			masked |= 0b10000000
+			masked |= 0x80
 		}
 		buf.WriteByte(byte(masked))
 		mask >>= 7
@@ -256,8 +256,8 @@ func unmarshalInt(data []byte, ofs int) (uint64, int, error) {
 		if ofs >= len(data) {
 			return 0, ofs, fmt.Errorf("Unexpected EOF")
 		}
-		bit := data[ofs] & 0b10000000
-		val := data[ofs] & 0b01111111
+		bit := data[ofs] & 0x80
+		val := data[ofs] & 0x7f
 
 		ofs++
 
