@@ -9,6 +9,7 @@
 package tlv
 
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
 	"testing"
@@ -60,6 +61,7 @@ func TestMarshal(t *testing.T) {
 		},
 		Type(6): true,
 		Type(7): false,
+		Type(8): []byte{1, 2, 3, 4},
 	}
 
 	data, err := values.Marshal()
@@ -84,6 +86,15 @@ func TestMarshal(t *testing.T) {
 			deval, ok := dval.(Values)
 			if !ok {
 				t.Fatalf("Failed: %v, %v\n", eval, deval)
+			}
+
+		case []byte:
+			deval, ok := dval.([]byte)
+			if !ok {
+				t.Fatalf("Failed: %v, %v\n", eval, deval)
+			}
+			if bytes.Compare(eval, deval) != 0 {
+				t.Fatalf("Data mismatch: %x != %x", eval, deval)
 			}
 
 		default:

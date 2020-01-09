@@ -42,6 +42,7 @@ const (
 	VT_BOOL VType = iota
 	VT_INT
 	VT_STRING
+	VT_DATA
 	VT_MAP
 )
 
@@ -49,6 +50,7 @@ var vtypes = map[VType]string{
 	VT_BOOL:   "bool",
 	VT_INT:    "int",
 	VT_STRING: "string",
+	VT_DATA:   "data",
 	VT_MAP:    "map",
 }
 
@@ -136,6 +138,12 @@ func (v Values) Marshal() ([]byte, error) {
 			marshalInt(uint64(len(data)), buf)
 			buf.Write(data)
 
+		case []byte:
+			tag.SetVType(VT_DATA)
+			marshalInt(uint64(tag), buf)
+			marshalInt(uint64(len(val)), buf)
+			buf.Write(val)
+
 		case Values:
 			tag.SetVType(VT_MAP)
 			marshalInt(uint64(tag), buf)
@@ -206,6 +214,9 @@ func Unmarshal(data []byte) (Values, error) {
 
 		case VT_STRING:
 			val = string(data[ofs : ofs+int(length)])
+
+		case VT_DATA:
+			val = data[ofs : ofs+int(length)]
 
 		case VT_MAP:
 			val, err = Unmarshal(data[ofs : ofs+int(length)])

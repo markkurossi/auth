@@ -18,11 +18,6 @@ import (
 	"github.com/markkurossi/cicd/api/auth"
 )
 
-type Client struct {
-	ID     string
-	Secret string
-}
-
 type AccessToken tlv.Values
 
 func (t AccessToken) Marshal() (string, error) {
@@ -97,7 +92,8 @@ func clientCredentialsGrant(w http.ResponseWriter, r *http.Request,
 	client Client) {
 
 	tokenResponse(w, AccessToken{
-		tlv.Type(auth.T_TENANT): client.ID,
+		tlv.Type(auth.T_TENANT_ID): client.TenantID,
+		tlv.Type(auth.T_CLIENT_ID): client.ID,
 		tlv.Type(auth.T_SCOPE): tlv.Values{
 			tlv.Type(auth.SCOPE_ADMIN): true,
 		},
