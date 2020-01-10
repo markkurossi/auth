@@ -27,9 +27,50 @@ type Client struct {
 	Description string
 }
 
+func UnmarshalClient(data map[string]interface{}) (*Client, error) {
+	id, ok := data["id"].(string)
+	if !ok {
+		return nil, fmt.Errorf("No ID")
+	}
+	secret, ok := data["secret"].(string)
+	if !ok {
+		return nil, fmt.Errorf("No Secret")
+	}
+	tenant, ok := data["tenant"].(string)
+	if !ok {
+		return nil, fmt.Errorf("No TenantID")
+	}
+	description, ok := data["description"].(string)
+	if !ok {
+		return nil, fmt.Errorf("No Description")
+	}
+
+	return &Client{
+		ID:          id,
+		Secret:      secret,
+		TenantID:    tenant,
+		Description: description,
+	}, nil
+}
+
 type Tenant struct {
 	ID          string
 	Description string
+}
+
+func UnmarshalTenant(data map[string]interface{}) (*Tenant, error) {
+	id, ok := data["id"].(string)
+	if !ok {
+		return nil, fmt.Errorf("No ID")
+	}
+	description, ok := data["description"].(string)
+	if !ok {
+		return nil, fmt.Errorf("No Description")
+	}
+	return &Tenant{
+		ID:          id,
+		Description: description,
+	}, nil
 }
 
 type TenantID [8]byte
@@ -144,7 +185,35 @@ func (store *ClientStore) NewClient(tenant string, description string) (
 	return client, nil
 }
 
-func (store *ClientStore) Clients(id string) ([]*Client, error) {
+func (store *ClientStore) Clients() ([]*Client, error) {
+	iter := store.client.Collection("clients").DocumentRefs(store.ctx)
+
+	var result []*Client
+
+	for {
+		ref, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		doc, err := ref.Get(store.ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		client, err := UnmarshalClient(doc.Data())
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, client)
+	}
+
+	return result, nil
+}
+
+func (store *ClientStore) Client(id string) ([]*Client, error) {
 	q := store.client.Collection("clients").Where("id", "==", id)
 	iter := q.Documents(store.ctx)
 	defer iter.Stop()
@@ -160,30 +229,12 @@ func (store *ClientStore) Clients(id string) ([]*Client, error) {
 			return nil, err
 		}
 
-		data := doc.Data()
-		id, ok := data["id"].(string)
-		if !ok {
-			continue
-		}
-		secret, ok := data["secret"].(string)
-		if !ok {
-			continue
-		}
-		tenant, ok := data["tenant"].(string)
-		if !ok {
-			continue
-		}
-		description, ok := data["description"].(string)
-		if !ok {
-			continue
+		client, err := UnmarshalClient(doc.Data())
+		if err != nil {
+			return nil, err
 		}
 
-		result = append(result, &Client{
-			ID:          id,
-			Secret:      secret,
-			TenantID:    tenant,
-			Description: description,
-		})
+		result = append(result, client)
 	}
 
 	return result, nil
@@ -212,4 +263,58 @@ func (store *ClientStore) NewTenant(description string) (*Tenant, error) {
 	}
 
 	return tenant, nil
+}
+
+func (store *ClientStore) Tenants() ([]*Tenant, error) {
+	iter := store.client.Collection("tenants").DocumentRefs(store.ctx)
+
+	var result []*Tenant
+
+	for {
+		ref, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		doc, err := ref.Get(store.ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		tenant, err := UnmarshalTenant(doc.Data())
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, tenant)
+	}
+
+	return result, nil
+}
+
+func (store *ClientStore) Tenant(id string) ([]*Tenant, error) {
+	q := store.client.Collection("tenants").Where("id", "==", id)
+	iter := q.Documents(store.ctx)
+	defer iter.Stop()
+
+	var result []*Tenant
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		tenant, err := UnmarshalTenant(doc.Data())
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, tenant)
+	}
+
+	return result, nil
 }
