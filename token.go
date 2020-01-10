@@ -27,7 +27,7 @@ func (t AccessToken) Marshal() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return base64.StdEncoding.EncodeToString(data), nil
+	return base64.RawURLEncoding.EncodeToString(data), nil
 }
 
 func Token(w http.ResponseWriter, r *http.Request) {
@@ -106,9 +106,9 @@ func tokenResponse(w http.ResponseWriter, token tlv.Values) {
 	signature := ed25519.Sign(priv, tokenData)
 
 	data, err := json.Marshal(map[string]string{
-		"access_token": base64.StdEncoding.EncodeToString(tokenData),
+		"access_token": base64.RawURLEncoding.EncodeToString(tokenData),
 		"token_type":   "bearer",
-		"signature":    base64.StdEncoding.EncodeToString(signature),
+		"signature":    base64.RawURLEncoding.EncodeToString(signature),
 	})
 	if err != nil {
 		Error500f(w, "json.Marshal: %s", err)

@@ -76,13 +76,13 @@ func UnmarshalTenant(data map[string]interface{}) (*Tenant, error) {
 type TenantID [8]byte
 
 func (id TenantID) String() string {
-	return base64.RawStdEncoding.EncodeToString(id[:])
+	return base64.RawURLEncoding.EncodeToString(id[:])
 }
 
 func ParseTenantID(val string) (TenantID, error) {
 	var id TenantID
 
-	data, err := base64.RawStdEncoding.DecodeString(val)
+	data, err := base64.RawURLEncoding.DecodeString(val)
 	if err != nil {
 		return id, err
 	}
@@ -95,11 +95,11 @@ func ParseTenantID(val string) (TenantID, error) {
 }
 
 func (c *Client) VerifyPassword(password string) error {
-	plain, err := base64.RawStdEncoding.DecodeString(password)
+	plain, err := base64.RawURLEncoding.DecodeString(password)
 	if err != nil {
 		return err
 	}
-	hashed, err := base64.RawStdEncoding.DecodeString(c.Secret)
+	hashed, err := base64.RawURLEncoding.DecodeString(c.Secret)
 	if err != nil {
 		return err
 	}
@@ -156,20 +156,20 @@ func (store *ClientStore) NewClient(tenant string, description string) (
 	if err != nil {
 		return nil, err
 	}
-	client.ID = base64.RawStdEncoding.EncodeToString(buf[:8])
+	client.ID = base64.RawURLEncoding.EncodeToString(buf[:8])
 
 	_, err = rand.Read(buf[:])
 	if err != nil {
 		return nil, err
 	}
 
-	client.PlainSecret = base64.RawStdEncoding.EncodeToString(buf[:])
+	client.PlainSecret = base64.RawURLEncoding.EncodeToString(buf[:])
 
 	hashed, err := bcrypt.GenerateFromPassword(buf[:], bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
-	client.Secret = base64.RawStdEncoding.EncodeToString(hashed)
+	client.Secret = base64.RawURLEncoding.EncodeToString(hashed)
 
 	_, _, err = store.client.Collection("clients").Add(store.ctx,
 		map[string]interface{}{
@@ -249,7 +249,7 @@ func (store *ClientStore) NewTenant(description string) (*Tenant, error) {
 	}
 
 	tenant := &Tenant{
-		ID:          base64.RawStdEncoding.EncodeToString(buf[:]),
+		ID:          base64.RawURLEncoding.EncodeToString(buf[:]),
 		Description: description,
 	}
 
