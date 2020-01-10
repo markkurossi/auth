@@ -1,5 +1,5 @@
 //
-//cmd_client.go
+// cmd_client.go
 //
 // Copyright (c) 2019 Markku Rossi
 //
