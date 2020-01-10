@@ -38,17 +38,37 @@ func Token(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		Error500f(w, "ioutil.ReadAll: %s\n", err)
+		Error500f(w, "ioutil.ReadAll: %s", err)
+		return
 	}
 
-	log.Printf("Form: %v\n", r.Form)
-
-	var client Client
-
-	client.ID = r.Form.Get("client_id")
-	client.Secret = r.Form.Get("client_secret")
-	if len(client.ID) == 0 || len(client.Secret) == 0 {
+	clientID := r.Form.Get("client_id")
+	clientSecret := r.Form.Get("client_secret")
+	if len(clientID) == 0 || len(clientSecret) == 0 {
 		Errorf(w, ErrorInvalidClient, "No client credentials")
+		return
+	}
+
+	store, err := NewClientStore()
+	if err != nil {
+		Error500f(w, "NewClientStore: %s", err)
+		return
+	}
+	clients, err := store.Client(clientID)
+	if err != nil {
+		Error500f(w, "NewClientStore: %s", err)
+		return
+	}
+
+	var client *Client
+	for _, c := range clients {
+		if c.VerifyPassword(clientSecret) == nil {
+			client = c
+			break
+		}
+	}
+	if client == nil {
+		Errorf(w, ErrorInvalidClient, "Client authentication failed")
 		return
 	}
 
@@ -89,7 +109,7 @@ func tokenResponse(w http.ResponseWriter, token AccessToken) {
 }
 
 func clientCredentialsGrant(w http.ResponseWriter, r *http.Request,
-	client Client) {
+	client *Client) {
 
 	tokenResponse(w, AccessToken{
 		auth.T_TENANT_ID: client.TenantID,

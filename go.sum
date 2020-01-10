@@ -129,6 +129,8 @@ github.com/markkurossi/cicd v0.0.0-20200109203306-e45f88322e6d h1:O4RPC/0xUngnfE
 github.com/markkurossi/cicd v0.0.0-20200109203306-e45f88322e6d/go.mod h1:HuDeDRXlcpcdLflSiplcGr0xHKGJmq7UKKdszUnqNys=
 github.com/markkurossi/cicd v0.0.0-20200110130455-a85fb999a96b h1:1FrQw9wO/PGw68emei9Yq1D2eaNTqBluc2pZa/6tgn8=
 github.com/markkurossi/cicd v0.0.0-20200110130455-a85fb999a96b/go.mod h1:opzgm3hvFp9JR+deQqGuUcqL5tInm6HmWhp7QS9/yeI=
+github.com/markkurossi/cicd v0.0.0-20200110185604-6b59d9c15dcc h1:dF3+GxLzAvOPvYA8BNIpOeaPySvmW8eGxH5m8YqHsNU=
+github.com/markkurossi/cicd v0.0.0-20200110185604-6b59d9c15dcc/go.mod h1:opzgm3hvFp9JR+deQqGuUcqL5tInm6HmWhp7QS9/yeI=
 github.com/markkurossi/go-libs v0.0.0-20200110125959-29659c062aa9 h1:+3MrJxaF9zyNkMOT1HEM3PWObYDUtZQvZskpP/v3tTE=
 github.com/markkurossi/go-libs v0.0.0-20200110125959-29659c062aa9/go.mod h1:/G/3R4UDzX5sZ233raNbIj0q/hCe14N4k3h2NcRKiTU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
@@ -301,6 +303,8 @@ golang.org/x/tools v0.0.0-20200109200513-f270e23f6a90 h1:MoZUA35kRoa5P1oT9VCfvyg
 golang.org/x/tools v0.0.0-20200109200513-f270e23f6a90/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
 golang.org/x/tools v0.0.0-20200110042803-e2f26524b78c h1:cvaT39q0ejNk0L+8KRgsdlVtIcjVB6mxrEFXz3lIl3Y=
 golang.org/x/tools v0.0.0-20200110042803-e2f26524b78c/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
+golang.org/x/tools v0.0.0-20200110142700-428f1ab0ca03 h1:iPq9R0Zx+m39Vtm+v/7imzPGK2FOWXJFeIe1EBvHew4=
+golang.org/x/tools v0.0.0-20200110142700-428f1ab0ca03/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=

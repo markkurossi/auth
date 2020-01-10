@@ -14,6 +14,7 @@ import (
 	"os"
 
 	"github.com/markkurossi/auth"
+	api "github.com/markkurossi/cicd/api/auth"
 )
 
 type clientParams struct {
@@ -73,8 +74,13 @@ func clientCreate(params clientParams, args []string) error {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Client created:\nID:\t\t%s\nTenantID:\t%s\nDescription:\t%s\nSecret:\t\t%s\n",
-		client.ID, client.TenantID, client.Description, client.PlainSecret)
+	fmt.Println("Client created:")
+	fmt.Printf("ID:\t\t%s\n", client.ID)
+	fmt.Printf("TenantID:\t%s\n", client.TenantID)
+	fmt.Printf("Description:\t%s\n", client.Description)
+	fmt.Printf("Secret:\t\t%s\n", client.PlainSecret)
+	fmt.Printf("Authorization:\tBearer %s\n",
+		api.BasicAuth(client.ID, client.PlainSecret))
 
 	return nil
 }
