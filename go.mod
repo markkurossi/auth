@@ -8,6 +8,7 @@ require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.0.0
 	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/markkurossi/cicd v0.0.0-20200109203306-e45f88322e6d
+	github.com/markkurossi/go-libs v0.0.0-20200110125959-29659c062aa9
 	golang.org/x/crypto v0.0.0-20200109152110-61a87790db17
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/sys v0.0.0-20200107162124-548cf772de50 // indirect

@@ -14,8 +14,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/markkurossi/auth/tlv"
 	"github.com/markkurossi/cicd/api/auth"
+	"github.com/markkurossi/go-libs/tlv"
 )
 
 type AccessToken tlv.Values
