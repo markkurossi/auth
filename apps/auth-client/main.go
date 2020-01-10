@@ -19,6 +19,7 @@ import (
 
 var commands = map[string]func(store *auth.ClientStore){
 	"client": cmdClient,
+	"key":    cmdKey,
 	"tenant": cmdTenant,
 }
 

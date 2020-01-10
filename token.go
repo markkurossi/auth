@@ -9,6 +9,7 @@
 package auth
 
 import (
+	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
 	"log"
@@ -16,6 +17,7 @@ import (
 
 	"github.com/markkurossi/cicd/api/auth"
 	"github.com/markkurossi/go-libs/tlv"
+	"golang.org/x/crypto/ed25519"
 )
 
 type AccessToken tlv.Values
@@ -88,16 +90,25 @@ func Token(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func tokenResponse(w http.ResponseWriter, token AccessToken) {
-	str, err := token.Marshal()
+func tokenResponse(w http.ResponseWriter, token tlv.Values) {
+	tokenData, err := token.Marshal()
 	if err != nil {
 		Error500f(w, "token.Marshal: %s", err)
 		return
 	}
 
+	_, priv, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		Error500f(w, "ed25519.GenerateKey: %s", err)
+		return
+	}
+
+	signature := ed25519.Sign(priv, tokenData)
+
 	data, err := json.Marshal(map[string]string{
-		"access_token": str,
+		"access_token": base64.StdEncoding.EncodeToString(tokenData),
 		"token_type":   "bearer",
+		"signature":    base64.StdEncoding.EncodeToString(signature),
 	})
 	if err != nil {
 		Error500f(w, "json.Marshal: %s", err)
@@ -111,7 +122,7 @@ func tokenResponse(w http.ResponseWriter, token AccessToken) {
 func clientCredentialsGrant(w http.ResponseWriter, r *http.Request,
 	client *Client) {
 
-	tokenResponse(w, AccessToken{
+	tokenResponse(w, tlv.Values{
 		auth.T_TENANT_ID: client.TenantID,
 		auth.T_CLIENT_ID: client.ID,
 		auth.T_SCOPE: tlv.Values{
