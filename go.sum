@@ -116,6 +116,10 @@ github.com/markkurossi/cicd v0.0.0-20200110185604-6b59d9c15dcc h1:dF3+GxLzAvOPvY
 github.com/markkurossi/cicd v0.0.0-20200110185604-6b59d9c15dcc/go.mod h1:opzgm3hvFp9JR+deQqGuUcqL5tInm6HmWhp7QS9/yeI=
 github.com/markkurossi/cicd v0.0.0-20200110212738-a8960ae73880 h1:2EvnD/cDBnFvLY1g8U7+aRkn5UOGXyoB/3N8dNsJnWo=
 github.com/markkurossi/cicd v0.0.0-20200110212738-a8960ae73880/go.mod h1:opzgm3hvFp9JR+deQqGuUcqL5tInm6HmWhp7QS9/yeI=
+github.com/markkurossi/cicd v0.0.0-20200110230346-71d93df49995 h1:DAHVFN8kWALnWVMiNnH9UuywE4DacsrDP+uN1BTj3WA=
+github.com/markkurossi/cicd v0.0.0-20200110230346-71d93df49995/go.mod h1:opzgm3hvFp9JR+deQqGuUcqL5tInm6HmWhp7QS9/yeI=
+github.com/markkurossi/cicd v0.0.0-20200111145856-60f561d84c51 h1:Rz/ybNwdS8TfH2GSlRagxkfefnaRUZmosA4dR1dyY4w=
+github.com/markkurossi/cicd v0.0.0-20200111145856-60f561d84c51/go.mod h1:D6lGS4u6VEMmX7o2R18yQIhnu0XKjH6Vo/5rDRT6FI0=
 github.com/markkurossi/go-libs v0.0.0-20200110125959-29659c062aa9 h1:+3MrJxaF9zyNkMOT1HEM3PWObYDUtZQvZskpP/v3tTE=
 github.com/markkurossi/go-libs v0.0.0-20200110125959-29659c062aa9/go.mod h1:/G/3R4UDzX5sZ233raNbIj0q/hCe14N4k3h2NcRKiTU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=

@@ -20,16 +20,6 @@ import (
 	"golang.org/x/crypto/ed25519"
 )
 
-type AccessToken tlv.Values
-
-func (t AccessToken) Marshal() (string, error) {
-	data, err := tlv.Values(t).Marshal()
-	if err != nil {
-		return "", err
-	}
-	return base64.RawURLEncoding.EncodeToString(data), nil
-}
-
 func Token(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s: %s\n", r.Method, r.URL.Path)
 
@@ -90,10 +80,10 @@ func Token(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func tokenResponse(w http.ResponseWriter, token tlv.Values) {
-	tokenData, err := token.Marshal()
+func tokenResponse(w http.ResponseWriter, values tlv.Values) {
+	valuesData, err := values.Marshal()
 	if err != nil {
-		Error500f(w, "token.Marshal: %s", err)
+		Error500f(w, "values.Marshal: %s", err)
 		return
 	}
 
@@ -103,12 +93,22 @@ func tokenResponse(w http.ResponseWriter, token tlv.Values) {
 		return
 	}
 
-	signature := ed25519.Sign(priv, tokenData)
+	signature := ed25519.Sign(priv, valuesData)
+
+	token := tlv.Values{
+		auth.TOKEN_VALUES:    valuesData,
+		auth.TOKEN_SIGNATURE: signature,
+	}
+
+	tokenData, err := token.Marshal()
+	if err != nil {
+		Error500f(w, "token.Marshal: %s", err)
+		return
+	}
 
 	data, err := json.Marshal(map[string]string{
 		"access_token": base64.RawURLEncoding.EncodeToString(tokenData),
 		"token_type":   "bearer",
-		"signature":    base64.RawURLEncoding.EncodeToString(signature),
 	})
 	if err != nil {
 		Error500f(w, "json.Marshal: %s", err)
