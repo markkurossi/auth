@@ -7,7 +7,7 @@ require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.0.0
 	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
-	github.com/markkurossi/cicd v0.0.0-20200111145856-60f561d84c51
+	github.com/markkurossi/cicd v0.0.0-20200111154754-8828e7fe6660
 	github.com/markkurossi/go-libs v0.0.0-20200110125959-29659c062aa9
 	github.com/stretchr/testify v1.4.0 // indirect
 	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5

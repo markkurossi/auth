@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/markkurossi/cicd/api/auth"
 	"github.com/markkurossi/go-libs/tlv"
@@ -96,7 +97,7 @@ func tokenResponse(w http.ResponseWriter, values tlv.Values) {
 	signature := ed25519.Sign(priv, valuesData)
 
 	token := tlv.Values{
-		auth.TOKEN_VALUES:    valuesData,
+		auth.TOKEN_VALUES:    values,
 		auth.TOKEN_SIGNATURE: signature,
 	}
 
@@ -125,6 +126,7 @@ func clientCredentialsGrant(w http.ResponseWriter, r *http.Request,
 	tokenResponse(w, tlv.Values{
 		auth.T_TENANT_ID: client.TenantID,
 		auth.T_CLIENT_ID: client.ID,
+		auth.T_CREATED:   uint64(time.Now().Unix()),
 		auth.T_SCOPE: tlv.Values{
 			auth.SCOPE_ADMIN: true,
 		},
