@@ -51,7 +51,7 @@ func Token(w http.ResponseWriter, r *http.Request) {
 
 	clients, err := store.Client(clientID)
 	if err != nil {
-		Error500f(w, "NewClientStore: %s", err)
+		Error500f(w, "store.Client: %s", err)
 		return
 	}
 	if len(clients) == 0 {

@@ -15,6 +15,7 @@
 vendor/
 
 *-env.sh
+*~
 
 apps/cmd/cmd
 apps/auth-client/auth-client
