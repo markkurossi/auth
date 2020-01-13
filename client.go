@@ -317,3 +317,69 @@ func (store *ClientStore) Tenant(id string) ([]*Tenant, error) {
 
 	return result, nil
 }
+
+type Asset struct {
+	Name string
+	Data []byte
+}
+
+func UnmarshalAsset(data map[string]interface{}) (*Asset, error) {
+	name, ok := data["name"].(string)
+	if !ok {
+		return nil, fmt.Errorf("No Name")
+	}
+	str, ok := data["data"].(string)
+	if !ok {
+		return nil, fmt.Errorf("No Data")
+	}
+	bytes, err := base64.RawURLEncoding.DecodeString(str)
+	if err != nil {
+		return nil, err
+	}
+	return &Asset{
+		Name: name,
+		Data: bytes,
+	}, nil
+}
+
+func (store *ClientStore) NewAsset(name string, data []byte) (*Asset, error) {
+	asset := &Asset{
+		Name: name,
+		Data: data,
+	}
+	_, _, err := store.client.Collection("assets").Add(store.ctx,
+		map[string]interface{}{
+			"name": name,
+			"data": base64.RawURLEncoding.EncodeToString(data),
+		})
+	if err != nil {
+		return nil, err
+	}
+	return asset, nil
+}
+
+func (store *ClientStore) Asset(name string) ([]*Asset, error) {
+	q := store.client.Collection("assets").Where("name", "==", name)
+	iter := q.Documents(store.ctx)
+	defer iter.Stop()
+
+	var result []*Asset
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		asset, err := UnmarshalAsset(doc.Data())
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, asset)
+	}
+
+	return result, nil
+}

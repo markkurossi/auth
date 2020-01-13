@@ -119,6 +119,24 @@ func keyCreate(params keyParams, args []string) error {
 				os.Exit(1)
 			}
 
+		case api.KEY_TOKEN_SIGNATURE_KEY:
+			pub, priv, err := ed25519.GenerateKey(rand.Reader)
+			if err != nil {
+				fmt.Printf("ed25519.GenerateKey: %s\n", err)
+				os.Exit(1)
+			}
+
+			err = params.vault.Create(api.KEY_TOKEN_SIGNATURE_KEY, priv)
+			if err != nil {
+				fmt.Printf("Create failed: %s\n", err)
+				os.Exit(1)
+			}
+			_, err = params.store.NewAsset(api.ASSET_AUTH_PUBKEY, pub)
+			if err != nil {
+				fmt.Printf("Failed to store public key: %s\n", err)
+				os.Exit(1)
+			}
+
 		default:
 			fmt.Printf("Unknown key type %s\n", arg)
 			os.Exit(1)

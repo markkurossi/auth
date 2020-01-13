@@ -9,7 +9,6 @@
 package auth
 
 import (
-	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
 	"log"
@@ -85,13 +84,7 @@ func tokenResponse(w http.ResponseWriter, values tlv.Values) {
 		return
 	}
 
-	_, priv, err := ed25519.GenerateKey(rand.Reader)
-	if err != nil {
-		Error500f(w, "ed25519.GenerateKey: %s", err)
-		return
-	}
-
-	signature := ed25519.Sign(priv, valuesData)
+	signature := ed25519.Sign(signatureKey, valuesData)
 
 	token := tlv.Values{
 		auth.TOKEN_VALUES:    values,

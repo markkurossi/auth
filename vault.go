@@ -13,7 +13,6 @@ import (
 	"fmt"
 
 	secretmanager "cloud.google.com/go/secretmanager/apiv1beta1"
-	api "github.com/markkurossi/cicd/api/auth"
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1beta1"
 )
 
@@ -45,7 +44,7 @@ func NewVault() (*Vault, error) {
 func (vault *Vault) Create(name string, data []byte) error {
 	createReq := &secretmanagerpb.CreateSecretRequest{
 		Parent:   fmt.Sprintf("projects/%s", vault.projectID),
-		SecretId: api.KEY_CLIENT_ID_SECRET,
+		SecretId: name,
 		Secret: &secretmanagerpb.Secret{
 			Replication: &secretmanagerpb.Replication{
 				Replication: &secretmanagerpb.Replication_Automatic_{

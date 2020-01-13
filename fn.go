@@ -15,6 +15,7 @@ import (
 	"net/http"
 
 	api "github.com/markkurossi/cicd/api/auth"
+	"golang.org/x/crypto/ed25519"
 )
 
 var (
@@ -23,6 +24,7 @@ var (
 	store          *ClientStore
 	vault          *Vault
 	clientIDSecret []byte
+	signatureKey   ed25519.PrivateKey
 )
 
 func init() {
@@ -45,8 +47,15 @@ func init() {
 	}
 	clientIDSecret, err = vault.Get(api.KEY_CLIENT_ID_SECRET, "")
 	if err != nil {
-		log.Fatalf("Failed to get secret %s: %s", api.KEY_CLIENT_ID_SECRET, err)
+		log.Fatalf("Failed to get secret %s: %s\n",
+			api.KEY_CLIENT_ID_SECRET, err)
 	}
+	data, err := vault.Get(api.KEY_TOKEN_SIGNATURE_KEY, "")
+	if err != nil {
+		log.Fatalf("Failed to get secret %s: %s\n",
+			api.KEY_TOKEN_SIGNATURE_KEY, err)
+	}
+	signatureKey = ed25519.PrivateKey(data)
 }
 
 func Auth(w http.ResponseWriter, r *http.Request) {
