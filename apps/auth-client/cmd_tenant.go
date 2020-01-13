@@ -22,7 +22,7 @@ var tenantCmds = map[string]func(store *auth.ClientStore, args []string) error{
 	"get":    tenantGet,
 }
 
-func cmdTenant(store *auth.ClientStore) {
+func cmdTenant(store *auth.ClientStore, vault *auth.Vault) {
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
@@ -49,15 +49,15 @@ func cmdTenant(store *auth.ClientStore) {
 
 func tenantCreate(store *auth.ClientStore, args []string) error {
 	if len(args) != 1 {
-		fmt.Printf("Usage: tenant create DESCRIPTION\n")
+		fmt.Printf("Usage: tenant create NAME\n")
 		os.Exit(1)
 	}
 	tenant, err := store.NewTenant(args[0])
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Tenant created:\nID\t\t%s\nDescription:\t%s\n",
-		tenant.ID, tenant.Description)
+	fmt.Printf("Tenant created:\nID:\t%s\nName:\t%s\n",
+		tenant.ID, tenant.Name)
 	return nil
 }
 
@@ -68,7 +68,7 @@ func tenantList(store *auth.ClientStore, args []string) error {
 	}
 
 	for _, t := range tenants {
-		fmt.Printf("%s\t%s\n", t.ID, t.Description)
+		fmt.Printf("%s\t%s\n", t.ID, t.Name)
 	}
 	return nil
 }
@@ -86,7 +86,7 @@ func tenantGet(store *auth.ClientStore, args []string) error {
 			continue
 		}
 		for _, t := range matches {
-			fmt.Printf("%s\t%s\n", t.ID, t.Description)
+			fmt.Printf("%s\t%s\n", t.ID, t.Name)
 		}
 	}
 	return nil

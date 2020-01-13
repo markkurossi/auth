@@ -19,8 +19,8 @@ import (
 
 type clientParams struct {
 	store  *auth.ClientStore
+	vault  *auth.Vault
 	tenant string
-	secret string
 }
 
 var clientCmds = map[string]func(params clientParams, args []string) error{
@@ -29,9 +29,8 @@ var clientCmds = map[string]func(params clientParams, args []string) error{
 	"get":    clientGet,
 }
 
-func cmdClient(store *auth.ClientStore) {
+func cmdClient(store *auth.ClientStore, vault *auth.Vault) {
 	tenant := flag.String("t", "", "Tenant ID")
-	secret := flag.String("s", "", "Client secret")
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
@@ -44,8 +43,8 @@ func cmdClient(store *auth.ClientStore) {
 
 	params := clientParams{
 		store:  store,
+		vault:  vault,
 		tenant: *tenant,
-		secret: *secret,
 	}
 
 	args := flag.Args()
@@ -64,11 +63,18 @@ func cmdClient(store *auth.ClientStore) {
 
 func clientCreate(params clientParams, args []string) error {
 	if len(args) != 1 {
-		fmt.Printf("Usage: client create DESCRIPTION\n")
+		flag.Usage()
+		fmt.Printf("Usage: client create NAME\n")
 		os.Exit(1)
 	}
 
-	client, err := params.store.NewClient(params.tenant, args[0])
+	secret, err := params.vault.Get(api.KEY_CLIENT_ID_SECRET, "")
+	if err != nil {
+		fmt.Printf("Failed to get client ID secret: %s\n", err)
+		os.Exit(1)
+	}
+
+	client, err := params.store.NewClient(params.tenant, args[0], secret)
 	if err != nil {
 		fmt.Printf("Failed to create client: %s\n", err)
 		os.Exit(1)
@@ -76,11 +82,11 @@ func clientCreate(params clientParams, args []string) error {
 
 	fmt.Println("Client created:")
 	fmt.Printf("ID:\t\t%s\n", client.ID)
+	fmt.Printf("Secret:\t\t%s\n", client.Secret)
 	fmt.Printf("TenantID:\t%s\n", client.TenantID)
-	fmt.Printf("Description:\t%s\n", client.Description)
-	fmt.Printf("Secret:\t\t%s\n", client.PlainSecret)
+	fmt.Printf("Name:\t\t%s\n", client.Name)
 	fmt.Printf("Authorization:\tBearer %s\n",
-		api.BasicAuth(client.ID, client.PlainSecret))
+		api.BasicAuth(client.ID, client.Secret))
 
 	return nil
 }
@@ -92,7 +98,7 @@ func clientList(params clientParams, args []string) error {
 	}
 
 	for _, c := range clients {
-		fmt.Printf("%s\t%s\n", c.ID, c.Description)
+		fmt.Printf("%s\t%s\n", c.ID, c.Name)
 	}
 
 	return nil
@@ -104,6 +110,12 @@ func clientGet(params clientParams, args []string) error {
 		os.Exit(1)
 	}
 
+	secret, err := params.vault.Get(api.KEY_CLIENT_ID_SECRET, "")
+	if err != nil {
+		fmt.Printf("Failed to get client ID secret: %s\n", err)
+		os.Exit(1)
+	}
+
 	for _, id := range args {
 		matches, err := params.store.Client(id)
 		if err != nil {
@@ -111,17 +123,15 @@ func clientGet(params clientParams, args []string) error {
 			continue
 		}
 		for _, c := range matches {
-			fmt.Printf("ID:\t\t%s\n", c.ID)
-			fmt.Printf("TenantID:\t%s\n", c.TenantID)
-			fmt.Printf("Description:\t%s\n", c.Description)
-			if len(params.secret) > 0 {
-				err = c.VerifyPassword(params.secret)
-				if err != nil {
-					fmt.Printf("Secret:\t\t\u2717 %s\n", err)
-				} else {
-					fmt.Printf("Secret:\t\t\u2713\n")
-				}
+			err = c.CreateSecret(secret)
+			if err != nil {
+				fmt.Printf("Failed to create client secret: %s\n", err)
+				os.Exit(1)
 			}
+			fmt.Printf("ID:\t\t%s\n", c.ID)
+			fmt.Printf("Secret:\t\t%s\n", c.Secret)
+			fmt.Printf("TenantID:\t%s\n", c.TenantID)
+			fmt.Printf("Name:\t\t%s\n", c.Name)
 		}
 	}
 	return nil

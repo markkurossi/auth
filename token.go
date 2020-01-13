@@ -42,28 +42,25 @@ func Token(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	store, err := NewClientStore()
-	if err != nil {
-		Error500f(w, "NewClientStore: %s", err)
+	// Verify client ID and secret.
+	if !VerifyClientCredentials(clientID, clientSecret, clientIDSecret) {
+		Errorf(w, ErrorInvalidClient, "Client authentication failed")
 		return
 	}
+
+	// Get client information.
+
 	clients, err := store.Client(clientID)
 	if err != nil {
 		Error500f(w, "NewClientStore: %s", err)
 		return
 	}
-
-	var client *Client
-	for _, c := range clients {
-		if c.VerifyPassword(clientSecret) == nil {
-			client = c
-			break
-		}
-	}
-	if client == nil {
+	if len(clients) == 0 {
 		Errorf(w, ErrorInvalidClient, "Client authentication failed")
 		return
 	}
+
+	client := clients[0]
 
 	grantType := r.Form.Get("grant_type")
 	if len(grantType) == 0 {

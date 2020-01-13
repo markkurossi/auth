@@ -17,7 +17,7 @@ import (
 	"github.com/markkurossi/auth"
 )
 
-var commands = map[string]func(store *auth.ClientStore){
+var commands = map[string]func(store *auth.ClientStore, vault *auth.Vault){
 	"client": cmdClient,
 	"key":    cmdKey,
 	"tenant": cmdTenant,
@@ -29,6 +29,11 @@ func main() {
 	store, err := auth.NewClientStore()
 	if err != nil {
 		log.Fatalf("auth.NewClientStore: %s\n", err)
+	}
+	vault, err := auth.NewVault()
+	if err != nil {
+		fmt.Printf("auth.NewVault: %s\n", err)
+		os.Exit(1)
 	}
 
 	arg0 := os.Args[0]
@@ -50,5 +55,5 @@ func main() {
 	}
 	flag.CommandLine = flag.NewFlagSet(fmt.Sprintf("%s %s", arg0, os.Args[0]),
 		flag.ExitOnError)
-	fn(store)
+	fn(store, vault)
 }

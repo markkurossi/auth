@@ -10,21 +10,46 @@ package auth
 
 import (
 	"context"
+	"crypto/hmac"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
 
 	"cloud.google.com/go/firestore"
-	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/api/iterator"
 )
 
 type Client struct {
-	ID          string
-	Secret      string
-	TenantID    string
-	PlainSecret string
-	Description string
+	ID       string
+	Secret   string
+	TenantID string
+	Name     string
+}
+
+func (c *Client) CreateSecret(clientIDSecret []byte) error {
+	id, err := base64.RawURLEncoding.DecodeString(c.ID)
+	if err != nil {
+		return err
+	}
+
+	mac := hmac.New(sha256.New, clientIDSecret)
+	mac.Write(id)
+
+	c.Secret = base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
+
+	return nil
+}
+
+func VerifyClientCredentials(id, secret string, clientIDSecret []byte) bool {
+	client := &Client{
+		ID: id,
+	}
+	err := client.CreateSecret(clientIDSecret)
+	if err != nil {
+		return false
+	}
+	return client.Secret == secret
 }
 
 func UnmarshalClient(data map[string]interface{}) (*Client, error) {
@@ -32,30 +57,25 @@ func UnmarshalClient(data map[string]interface{}) (*Client, error) {
 	if !ok {
 		return nil, fmt.Errorf("No ID")
 	}
-	secret, ok := data["secret"].(string)
-	if !ok {
-		return nil, fmt.Errorf("No Secret")
-	}
 	tenant, ok := data["tenant"].(string)
 	if !ok {
 		return nil, fmt.Errorf("No TenantID")
 	}
-	description, ok := data["description"].(string)
+	name, ok := data["name"].(string)
 	if !ok {
-		return nil, fmt.Errorf("No Description")
+		return nil, fmt.Errorf("No Name")
 	}
 
 	return &Client{
-		ID:          id,
-		Secret:      secret,
-		TenantID:    tenant,
-		Description: description,
+		ID:       id,
+		TenantID: tenant,
+		Name:     name,
 	}, nil
 }
 
 type Tenant struct {
-	ID          string
-	Description string
+	ID   string
+	Name string
 }
 
 func UnmarshalTenant(data map[string]interface{}) (*Tenant, error) {
@@ -63,13 +83,13 @@ func UnmarshalTenant(data map[string]interface{}) (*Tenant, error) {
 	if !ok {
 		return nil, fmt.Errorf("No ID")
 	}
-	description, ok := data["description"].(string)
+	name, ok := data["name"].(string)
 	if !ok {
-		return nil, fmt.Errorf("No Description")
+		return nil, fmt.Errorf("No Name")
 	}
 	return &Tenant{
-		ID:          id,
-		Description: description,
+		ID:   id,
+		Name: name,
 	}, nil
 }
 
@@ -92,18 +112,6 @@ func ParseTenantID(val string) (TenantID, error) {
 	copy(id[:], data)
 
 	return id, nil
-}
-
-func (c *Client) VerifyPassword(password string) error {
-	plain, err := base64.RawURLEncoding.DecodeString(password)
-	if err != nil {
-		return err
-	}
-	hashed, err := base64.RawURLEncoding.DecodeString(c.Secret)
-	if err != nil {
-		return err
-	}
-	return bcrypt.CompareHashAndPassword(hashed, plain)
 }
 
 type ClientStore struct {
@@ -137,8 +145,8 @@ func (store *ClientStore) Close() error {
 	return nil
 }
 
-func (store *ClientStore) NewClient(tenant string, description string) (
-	*Client, error) {
+func (store *ClientStore) NewClient(tenant string, name string,
+	clientIDSecret []byte) (*Client, error) {
 
 	var buf [16]byte
 
@@ -148,8 +156,8 @@ func (store *ClientStore) NewClient(tenant string, description string) (
 	}
 
 	client := &Client{
-		Description: description,
-		TenantID:    tenantID.String(),
+		Name:     name,
+		TenantID: tenantID.String(),
 	}
 
 	_, err = rand.Read(buf[:8])
@@ -158,25 +166,16 @@ func (store *ClientStore) NewClient(tenant string, description string) (
 	}
 	client.ID = base64.RawURLEncoding.EncodeToString(buf[:8])
 
-	_, err = rand.Read(buf[:])
+	err = client.CreateSecret(clientIDSecret)
 	if err != nil {
 		return nil, err
 	}
-
-	client.PlainSecret = base64.RawURLEncoding.EncodeToString(buf[:])
-
-	hashed, err := bcrypt.GenerateFromPassword(buf[:], bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
-	client.Secret = base64.RawURLEncoding.EncodeToString(hashed)
 
 	_, _, err = store.client.Collection("clients").Add(store.ctx,
 		map[string]interface{}{
-			"id":          client.ID,
-			"secret":      client.Secret,
-			"tenant":      client.TenantID,
-			"description": client.Description,
+			"id":     client.ID,
+			"tenant": client.TenantID,
+			"name":   client.Name,
 		})
 	if err != nil {
 		return nil, err
@@ -240,7 +239,7 @@ func (store *ClientStore) Client(id string) ([]*Client, error) {
 	return result, nil
 }
 
-func (store *ClientStore) NewTenant(description string) (*Tenant, error) {
+func (store *ClientStore) NewTenant(name string) (*Tenant, error) {
 	var buf [8]byte
 
 	_, err := rand.Read(buf[:])
@@ -249,14 +248,14 @@ func (store *ClientStore) NewTenant(description string) (*Tenant, error) {
 	}
 
 	tenant := &Tenant{
-		ID:          base64.RawURLEncoding.EncodeToString(buf[:]),
-		Description: description,
+		ID:   base64.RawURLEncoding.EncodeToString(buf[:]),
+		Name: name,
 	}
 
 	_, _, err = store.client.Collection("tenants").Add(store.ctx,
 		map[string]interface{}{
-			"id":          tenant.ID,
-			"description": tenant.Description,
+			"id":   tenant.ID,
+			"name": tenant.Name,
 		})
 	if err != nil {
 		return nil, err

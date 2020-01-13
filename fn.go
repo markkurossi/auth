@@ -13,11 +13,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	api "github.com/markkurossi/cicd/api/auth"
 )
 
 var (
-	mux       *http.ServeMux
-	projectID string
+	mux            *http.ServeMux
+	projectID      string
+	store          *ClientStore
+	vault          *Vault
+	clientIDSecret []byte
 )
 
 func init() {
@@ -29,6 +34,19 @@ func init() {
 		log.Fatalf("GetProjectID: %s\n", err)
 	}
 	projectID = id
+
+	store, err = NewClientStore()
+	if err != nil {
+		log.Fatalf("NewClientStore: %s\n", err)
+	}
+	vault, err = NewVault()
+	if err != nil {
+		log.Fatalf("NewVault: %s\n", err)
+	}
+	clientIDSecret, err = vault.Get(api.KEY_CLIENT_ID_SECRET, "")
+	if err != nil {
+		log.Fatalf("Failed to get secret %s: %s", api.KEY_CLIENT_ID_SECRET, err)
+	}
 }
 
 func Auth(w http.ResponseWriter, r *http.Request) {
