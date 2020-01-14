@@ -14,15 +14,16 @@ import (
 	"os"
 
 	"github.com/markkurossi/auth"
+	api "github.com/markkurossi/cicd/api/auth"
 )
 
-var tenantCmds = map[string]func(store *auth.ClientStore, args []string) error{
+var tenantCmds = map[string]func(store *api.ClientStore, args []string) error{
 	"create": tenantCreate,
 	"list":   tenantList,
 	"get":    tenantGet,
 }
 
-func cmdTenant(store *auth.ClientStore, vault *auth.Vault) {
+func cmdTenant(store *api.ClientStore, vault *auth.Vault) {
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
@@ -47,7 +48,7 @@ func cmdTenant(store *auth.ClientStore, vault *auth.Vault) {
 	}
 }
 
-func tenantCreate(store *auth.ClientStore, args []string) error {
+func tenantCreate(store *api.ClientStore, args []string) error {
 	if len(args) != 1 {
 		fmt.Printf("Usage: tenant create NAME\n")
 		os.Exit(1)
@@ -61,7 +62,7 @@ func tenantCreate(store *auth.ClientStore, args []string) error {
 	return nil
 }
 
-func tenantList(store *auth.ClientStore, args []string) error {
+func tenantList(store *api.ClientStore, args []string) error {
 	tenants, err := store.Tenants()
 	if err != nil {
 		return err
@@ -73,7 +74,7 @@ func tenantList(store *auth.ClientStore, args []string) error {
 	return nil
 }
 
-func tenantGet(store *auth.ClientStore, args []string) error {
+func tenantGet(store *api.ClientStore, args []string) error {
 	if len(args) == 0 {
 		fmt.Printf("Usage: tenant get ID...\n")
 		os.Exit(1)

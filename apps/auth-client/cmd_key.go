@@ -24,7 +24,7 @@ import (
 )
 
 type keyParams struct {
-	store *auth.ClientStore
+	store *api.ClientStore
 	vault *auth.Vault
 }
 
@@ -33,7 +33,7 @@ var keyCmds = map[string]func(params keyParams, args []string) error{
 	"get":    keyGet,
 }
 
-func cmdKey(store *auth.ClientStore, vault *auth.Vault) {
+func cmdKey(store *api.ClientStore, vault *auth.Vault) {
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {

@@ -15,9 +15,10 @@ import (
 	"os"
 
 	"github.com/markkurossi/auth"
+	api "github.com/markkurossi/cicd/api/auth"
 )
 
-var commands = map[string]func(store *auth.ClientStore, vault *auth.Vault){
+var commands = map[string]func(store *api.ClientStore, vault *auth.Vault){
 	"client": cmdClient,
 	"key":    cmdKey,
 	"tenant": cmdTenant,
@@ -26,7 +27,7 @@ var commands = map[string]func(store *auth.ClientStore, vault *auth.Vault){
 func main() {
 	flag.Parse()
 
-	store, err := auth.NewClientStore()
+	store, err := api.NewClientStore()
 	if err != nil {
 		log.Fatalf("auth.NewClientStore: %s\n", err)
 	}

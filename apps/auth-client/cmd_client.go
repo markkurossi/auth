@@ -18,7 +18,7 @@ import (
 )
 
 type clientParams struct {
-	store  *auth.ClientStore
+	store  *api.ClientStore
 	vault  *auth.Vault
 	tenant string
 }
@@ -29,7 +29,7 @@ var clientCmds = map[string]func(params clientParams, args []string) error{
 	"get":    clientGet,
 }
 
-func cmdClient(store *auth.ClientStore, vault *auth.Vault) {
+func cmdClient(store *api.ClientStore, vault *auth.Vault) {
 	tenant := flag.String("t", "", "Tenant ID")
 	flag.Parse()
 

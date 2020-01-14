@@ -21,7 +21,7 @@ import (
 var (
 	mux            *http.ServeMux
 	projectID      string
-	store          *ClientStore
+	store          *api.ClientStore
 	vault          *Vault
 	clientIDSecret []byte
 	signatureKey   ed25519.PrivateKey
@@ -42,7 +42,7 @@ func init() {
 	}
 	projectID = id
 
-	store, err = NewClientStore()
+	store, err = api.NewClientStore()
 	if err != nil {
 		Fatalf("NewClientStore: %s\n", err)
 	}

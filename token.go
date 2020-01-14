@@ -15,7 +15,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/markkurossi/cicd/api/auth"
+	api "github.com/markkurossi/cicd/api/auth"
 	"github.com/markkurossi/go-libs/tlv"
 	"golang.org/x/crypto/ed25519"
 )
@@ -40,7 +40,7 @@ func Token(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Verify client ID and secret.
-	if !VerifyClientCredentials(clientID, clientSecret, clientIDSecret) {
+	if !api.VerifyClientCredentials(clientID, clientSecret, clientIDSecret) {
 		Errorf(w, ErrorInvalidClient, "Client authentication failed")
 		return
 	}
@@ -85,8 +85,8 @@ func tokenResponse(w http.ResponseWriter, values tlv.Values) {
 	signature := ed25519.Sign(signatureKey, valuesData)
 
 	token := tlv.Values{
-		auth.TOKEN_VALUES:    values,
-		auth.TOKEN_SIGNATURE: signature,
+		api.TOKEN_VALUES:    values,
+		api.TOKEN_SIGNATURE: signature,
 	}
 
 	tokenData, err := token.Marshal()
@@ -109,17 +109,17 @@ func tokenResponse(w http.ResponseWriter, values tlv.Values) {
 }
 
 func clientCredentialsGrant(w http.ResponseWriter, r *http.Request,
-	client *Client) {
+	client *api.Client) {
 
 	fmt.Printf("Granting access token for client %s (tenant %s)\n",
 		client.Name, client.TenantID)
 
 	tokenResponse(w, tlv.Values{
-		auth.T_TENANT_ID: client.TenantID,
-		auth.T_CLIENT_ID: client.ID,
-		auth.T_CREATED:   uint64(time.Now().Unix()),
-		auth.T_SCOPE: tlv.Values{
-			auth.SCOPE_ADMIN: true,
+		api.T_TENANT_ID: client.TenantID,
+		api.T_CLIENT_ID: client.ID,
+		api.T_CREATED:   uint64(time.Now().Unix()),
+		api.T_SCOPE: tlv.Values{
+			api.SCOPE_ADMIN: true,
 		},
 	})
 }
