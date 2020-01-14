@@ -11,8 +11,8 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+	"os"
 
 	api "github.com/markkurossi/cicd/api/auth"
 	"golang.org/x/crypto/ed25519"
@@ -27,32 +27,36 @@ var (
 	signatureKey   ed25519.PrivateKey
 )
 
+func Fatalf(format string, a ...interface{}) {
+	fmt.Printf(format, a...)
+	os.Exit(1)
+}
+
 func init() {
 	mux = http.NewServeMux()
 	mux.HandleFunc("/token", Token)
 
 	id, err := GetProjectID()
 	if err != nil {
-		log.Fatalf("GetProjectID: %s\n", err)
+		Fatalf("GetProjectID: %s\n", err)
 	}
 	projectID = id
 
 	store, err = NewClientStore()
 	if err != nil {
-		log.Fatalf("NewClientStore: %s\n", err)
+		Fatalf("NewClientStore: %s\n", err)
 	}
 	vault, err = NewVault()
 	if err != nil {
-		log.Fatalf("NewVault: %s\n", err)
+		Fatalf("NewVault: %s\n", err)
 	}
 	clientIDSecret, err = vault.Get(api.KEY_CLIENT_ID_SECRET, "")
 	if err != nil {
-		log.Fatalf("Failed to get secret %s: %s\n",
-			api.KEY_CLIENT_ID_SECRET, err)
+		Fatalf("Failed to get secret %s: %s\n", api.KEY_CLIENT_ID_SECRET, err)
 	}
 	data, err := vault.Get(api.KEY_TOKEN_SIGNATURE_KEY, "")
 	if err != nil {
-		log.Fatalf("Failed to get secret %s: %s\n",
+		Fatalf("Failed to get secret %s: %s\n",
 			api.KEY_TOKEN_SIGNATURE_KEY, err)
 	}
 	signatureKey = ed25519.PrivateKey(data)

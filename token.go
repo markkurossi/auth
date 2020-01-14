@@ -11,7 +11,7 @@ package auth
 import (
 	"encoding/base64"
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -21,8 +21,6 @@ import (
 )
 
 func Token(w http.ResponseWriter, r *http.Request) {
-	log.Printf("%s: %s\n", r.Method, r.URL.Path)
-
 	if r.Method != "POST" {
 		Errorf(w, ErrorInvalidRequest, "Invalid method %s", r.Method)
 		return
@@ -112,6 +110,9 @@ func tokenResponse(w http.ResponseWriter, values tlv.Values) {
 
 func clientCredentialsGrant(w http.ResponseWriter, r *http.Request,
 	client *Client) {
+
+	fmt.Printf("Granting access token for client %s (tenant %s)\n",
+		client.Name, client.TenantID)
 
 	tokenResponse(w, tlv.Values{
 		auth.T_TENANT_ID: client.TenantID,
