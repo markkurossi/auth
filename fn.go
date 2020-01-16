@@ -16,6 +16,7 @@ import (
 
 	api "github.com/markkurossi/cicd/api/auth"
 	"github.com/markkurossi/cicd/api/secretmanager"
+	"github.com/markkurossi/go-libs/fn"
 	"golang.org/x/crypto/ed25519"
 )
 
@@ -37,7 +38,7 @@ func init() {
 	mux = http.NewServeMux()
 	mux.HandleFunc("/token", Token)
 
-	id, err := GetProjectID()
+	id, err := fn.GetProjectID()
 	if err != nil {
 		Fatalf("GetProjectID: %s\n", err)
 	}
