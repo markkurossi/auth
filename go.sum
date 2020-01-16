@@ -126,12 +126,8 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/markkurossi/cicd v0.0.0-20200113155424-6892a75b97c8 h1:oi/nnOpwDabf0Rz55TTsA5d6TPIvZqGS1hPqEtJ23kw=
-github.com/markkurossi/cicd v0.0.0-20200113155424-6892a75b97c8/go.mod h1:D6lGS4u6VEMmX7o2R18yQIhnu0XKjH6Vo/5rDRT6FI0=
-github.com/markkurossi/cicd v0.0.0-20200114163931-eee385eb4ae5 h1:EVyO7VtMQYvJ6ASI4uoP6WR44IVGXm0yYs+LQhLdDQc=
-github.com/markkurossi/cicd v0.0.0-20200114163931-eee385eb4ae5/go.mod h1:D6lGS4u6VEMmX7o2R18yQIhnu0XKjH6Vo/5rDRT6FI0=
-github.com/markkurossi/go-libs v0.0.0-20200110125959-29659c062aa9 h1:+3MrJxaF9zyNkMOT1HEM3PWObYDUtZQvZskpP/v3tTE=
-github.com/markkurossi/go-libs v0.0.0-20200110125959-29659c062aa9/go.mod h1:/G/3R4UDzX5sZ233raNbIj0q/hCe14N4k3h2NcRKiTU=
+github.com/markkurossi/cicd v0.0.0-20200116123358-d770ff3300b0 h1:Qxg9pJKuVwMzO4Kul35UWZiYDkJKa4iW7Izdcn3AvBQ=
+github.com/markkurossi/cicd v0.0.0-20200116123358-d770ff3300b0/go.mod h1:D6lGS4u6VEMmX7o2R18yQIhnu0XKjH6Vo/5rDRT6FI0=
 github.com/markkurossi/go-libs v0.0.0-20200114170848-c582f9e7e1bb h1:gM09R8JlqnJwxp9c/PSMerO09/n3ZSjKR+pA56ugXLk=
 github.com/markkurossi/go-libs v0.0.0-20200114170848-c582f9e7e1bb/go.mod h1:/G/3R4UDzX5sZ233raNbIj0q/hCe14N4k3h2NcRKiTU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=

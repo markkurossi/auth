@@ -14,11 +14,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/markkurossi/auth"
-	api "github.com/markkurossi/cicd/api/auth"
+	"github.com/markkurossi/cicd/api/auth"
+	"github.com/markkurossi/cicd/api/secretmanager"
 )
 
-var commands = map[string]func(store *api.ClientStore, vault *auth.Vault){
+var commands = map[string]func(store *auth.ClientStore,
+	secretManager *secretmanager.Client){
 	"client": cmdClient,
 	"key":    cmdKey,
 	"tenant": cmdTenant,
@@ -27,11 +28,11 @@ var commands = map[string]func(store *api.ClientStore, vault *auth.Vault){
 func main() {
 	flag.Parse()
 
-	store, err := api.NewClientStore()
+	store, err := auth.NewClientStore()
 	if err != nil {
 		log.Fatalf("auth.NewClientStore: %s\n", err)
 	}
-	vault, err := auth.NewVault()
+	secretManager, err := secretmanager.NewClient()
 	if err != nil {
 		fmt.Printf("auth.NewVault: %s\n", err)
 		os.Exit(1)
@@ -56,5 +57,5 @@ func main() {
 	}
 	flag.CommandLine = flag.NewFlagSet(fmt.Sprintf("%s %s", arg0, os.Args[0]),
 		flag.ExitOnError)
-	fn(store, vault)
+	fn(store, secretManager)
 }

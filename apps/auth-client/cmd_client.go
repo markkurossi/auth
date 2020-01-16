@@ -13,14 +13,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/markkurossi/auth"
-	api "github.com/markkurossi/cicd/api/auth"
+	"github.com/markkurossi/cicd/api/auth"
+	"github.com/markkurossi/cicd/api/secretmanager"
 )
 
 type clientParams struct {
-	store  *api.ClientStore
-	vault  *auth.Vault
-	tenant string
+	store         *auth.ClientStore
+	secretManager *secretmanager.Client
+	tenant        string
 }
 
 var clientCmds = map[string]func(params clientParams, args []string) error{
@@ -29,7 +29,7 @@ var clientCmds = map[string]func(params clientParams, args []string) error{
 	"get":    clientGet,
 }
 
-func cmdClient(store *api.ClientStore, vault *auth.Vault) {
+func cmdClient(store *auth.ClientStore, secretManager *secretmanager.Client) {
 	tenant := flag.String("t", "", "Tenant ID")
 	flag.Parse()
 
@@ -42,9 +42,9 @@ func cmdClient(store *api.ClientStore, vault *auth.Vault) {
 	}
 
 	params := clientParams{
-		store:  store,
-		vault:  vault,
-		tenant: *tenant,
+		store:         store,
+		secretManager: secretManager,
+		tenant:        *tenant,
 	}
 
 	args := flag.Args()
@@ -68,7 +68,7 @@ func clientCreate(params clientParams, args []string) error {
 		os.Exit(1)
 	}
 
-	secret, err := params.vault.Get(api.KEY_CLIENT_ID_SECRET, "")
+	secret, err := params.secretManager.Get(auth.KEY_CLIENT_ID_SECRET, "")
 	if err != nil {
 		fmt.Printf("Failed to get client ID secret: %s\n", err)
 		os.Exit(1)
@@ -86,7 +86,7 @@ func clientCreate(params clientParams, args []string) error {
 	fmt.Printf("TenantID:\t%s\n", client.TenantID)
 	fmt.Printf("Name:\t\t%s\n", client.Name)
 	fmt.Printf("Authorization:\tBearer %s\n",
-		api.BasicAuth(client.ID, client.Secret))
+		auth.BasicAuth(client.ID, client.Secret))
 
 	return nil
 }
@@ -110,7 +110,7 @@ func clientGet(params clientParams, args []string) error {
 		os.Exit(1)
 	}
 
-	secret, err := params.vault.Get(api.KEY_CLIENT_ID_SECRET, "")
+	secret, err := params.secretManager.Get(auth.KEY_CLIENT_ID_SECRET, "")
 	if err != nil {
 		fmt.Printf("Failed to get client ID secret: %s\n", err)
 		os.Exit(1)

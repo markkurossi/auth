@@ -15,6 +15,7 @@ import (
 	"os"
 
 	api "github.com/markkurossi/cicd/api/auth"
+	"github.com/markkurossi/cicd/api/secretmanager"
 	"golang.org/x/crypto/ed25519"
 )
 
@@ -22,7 +23,7 @@ var (
 	mux            *http.ServeMux
 	projectID      string
 	store          *api.ClientStore
-	vault          *Vault
+	secretManager  *secretmanager.Client
 	clientIDSecret []byte
 	signatureKey   ed25519.PrivateKey
 )
@@ -46,15 +47,15 @@ func init() {
 	if err != nil {
 		Fatalf("NewClientStore: %s\n", err)
 	}
-	vault, err = NewVault()
+	secretManager, err = secretmanager.NewClient()
 	if err != nil {
 		Fatalf("NewVault: %s\n", err)
 	}
-	clientIDSecret, err = vault.Get(api.KEY_CLIENT_ID_SECRET, "")
+	clientIDSecret, err = secretManager.Get(api.KEY_CLIENT_ID_SECRET, "")
 	if err != nil {
 		Fatalf("Failed to get secret %s: %s\n", api.KEY_CLIENT_ID_SECRET, err)
 	}
-	data, err := vault.Get(api.KEY_TOKEN_SIGNATURE_KEY, "")
+	data, err := secretManager.Get(api.KEY_TOKEN_SIGNATURE_KEY, "")
 	if err != nil {
 		Fatalf("Failed to get secret %s: %s\n",
 			api.KEY_TOKEN_SIGNATURE_KEY, err)

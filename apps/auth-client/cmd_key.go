@@ -18,14 +18,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/markkurossi/auth"
-	api "github.com/markkurossi/cicd/api/auth"
+	"github.com/markkurossi/cicd/api/auth"
+	"github.com/markkurossi/cicd/api/secretmanager"
 	"golang.org/x/crypto/ed25519"
 )
 
 type keyParams struct {
-	store *api.ClientStore
-	vault *auth.Vault
+	store         *auth.ClientStore
+	secretManager *secretmanager.Client
 }
 
 var keyCmds = map[string]func(params keyParams, args []string) error{
@@ -33,7 +33,7 @@ var keyCmds = map[string]func(params keyParams, args []string) error{
 	"get":    keyGet,
 }
 
-func cmdKey(store *api.ClientStore, vault *auth.Vault) {
+func cmdKey(store *auth.ClientStore, secretManager *secretmanager.Client) {
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
@@ -45,8 +45,8 @@ func cmdKey(store *api.ClientStore, vault *auth.Vault) {
 	}
 
 	params := keyParams{
-		store: store,
-		vault: vault,
+		store:         store,
+		secretManager: secretManager,
 	}
 
 	args := flag.Args()
@@ -97,15 +97,16 @@ func cmdKey(store *api.ClientStore, vault *auth.Vault) {
 func keyCreate(params keyParams, args []string) error {
 	if len(args) == 0 {
 		fmt.Printf("Usage: key create TYPE...\nWhere type is:\n")
-		fmt.Printf(" - %s\tOAuth2 Client ID secret\n", api.KEY_CLIENT_ID_SECRET)
+		fmt.Printf(" - %s\tOAuth2 Client ID secret\n",
+			auth.KEY_CLIENT_ID_SECRET)
 		fmt.Printf(" - %s\tToken signature keypair\n",
-			api.KEY_TOKEN_SIGNATURE_KEY)
+			auth.KEY_TOKEN_SIGNATURE_KEY)
 		return nil
 	}
 
 	for _, arg := range args {
 		switch arg {
-		case api.KEY_CLIENT_ID_SECRET:
+		case auth.KEY_CLIENT_ID_SECRET:
 			var buf [64]byte
 
 			_, err := rand.Read(buf[:])
@@ -113,25 +114,26 @@ func keyCreate(params keyParams, args []string) error {
 				return err
 			}
 
-			err = params.vault.Create(api.KEY_CLIENT_ID_SECRET, buf[:])
+			err = params.secretManager.Create(auth.KEY_CLIENT_ID_SECRET, buf[:])
 			if err != nil {
 				fmt.Printf("Create failed: %s\n", err)
 				os.Exit(1)
 			}
 
-		case api.KEY_TOKEN_SIGNATURE_KEY:
+		case auth.KEY_TOKEN_SIGNATURE_KEY:
 			pub, priv, err := ed25519.GenerateKey(rand.Reader)
 			if err != nil {
 				fmt.Printf("ed25519.GenerateKey: %s\n", err)
 				os.Exit(1)
 			}
 
-			err = params.vault.Create(api.KEY_TOKEN_SIGNATURE_KEY, priv)
+			err = params.secretManager.Create(auth.KEY_TOKEN_SIGNATURE_KEY,
+				priv)
 			if err != nil {
 				fmt.Printf("Create failed: %s\n", err)
 				os.Exit(1)
 			}
-			_, err = params.store.NewAsset(api.ASSET_AUTH_PUBKEY, pub)
+			_, err = params.store.NewAsset(auth.ASSET_AUTH_PUBKEY, pub)
 			if err != nil {
 				fmt.Printf("Failed to store public key: %s\n", err)
 				os.Exit(1)
@@ -149,16 +151,17 @@ func keyCreate(params keyParams, args []string) error {
 func keyGet(params keyParams, args []string) error {
 	if len(args) == 0 {
 		fmt.Printf("Usage: key get TYPE...\nWhere typs is:\n")
-		fmt.Printf(" - %s\tOAuth2 Client ID secret\n", api.KEY_CLIENT_ID_SECRET)
+		fmt.Printf(" - %s\tOAuth2 Client ID secret\n",
+			auth.KEY_CLIENT_ID_SECRET)
 		fmt.Printf(" - %s\tToken signature keypair\n",
-			api.KEY_TOKEN_SIGNATURE_KEY)
+			auth.KEY_TOKEN_SIGNATURE_KEY)
 		return nil
 	}
 
 	for _, arg := range args {
 		switch arg {
-		case api.KEY_CLIENT_ID_SECRET:
-			data, err := params.vault.Get(api.KEY_CLIENT_ID_SECRET, "")
+		case auth.KEY_CLIENT_ID_SECRET:
+			data, err := params.secretManager.Get(auth.KEY_CLIENT_ID_SECRET, "")
 			if err != nil {
 				fmt.Printf("Get failed: %s\n", err)
 				os.Exit(1)
