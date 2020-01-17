@@ -9,6 +9,7 @@
 package auth
 
 import (
+	"crypto/ed25519"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,7 +18,6 @@ import (
 	api "github.com/markkurossi/cicd/api/auth"
 	"github.com/markkurossi/cicd/api/secretmanager"
 	"github.com/markkurossi/go-libs/fn"
-	"golang.org/x/crypto/ed25519"
 )
 
 var (

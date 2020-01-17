@@ -9,6 +9,7 @@
 package auth
 
 import (
+	"crypto/ed25519"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -17,7 +18,6 @@ import (
 
 	api "github.com/markkurossi/cicd/api/auth"
 	"github.com/markkurossi/go-libs/tlv"
-	"golang.org/x/crypto/ed25519"
 )
 
 func Token(w http.ResponseWriter, r *http.Request) {

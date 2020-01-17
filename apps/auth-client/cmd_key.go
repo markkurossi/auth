@@ -10,6 +10,7 @@ package main
 
 import (
 	"crypto"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
@@ -20,7 +21,6 @@ import (
 
 	"github.com/markkurossi/cicd/api/auth"
 	"github.com/markkurossi/cicd/api/secretmanager"
-	"golang.org/x/crypto/ed25519"
 )
 
 type keyParams struct {
