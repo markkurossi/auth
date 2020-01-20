@@ -126,12 +126,8 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/markkurossi/cloudsdk v0.0.0-20200120163304-5dd5ed89becc h1:WNf7OOu2W+Y5+8aKBJVJRHNxQCNDg0jHbEVCqarMtEw=
-github.com/markkurossi/cloudsdk v0.0.0-20200120163304-5dd5ed89becc/go.mod h1:Key/HHGbYQEjjRnoVLTuO7wgozu4QRqkBdSu8zcYD8o=
 github.com/markkurossi/cloudsdk v0.0.0-20200120182626-724b34dd56c0 h1:eAJ2jOShvFLfV4Lr4DVMNLrjg07cQwIqaZRstzoEm9o=
 github.com/markkurossi/cloudsdk v0.0.0-20200120182626-724b34dd56c0/go.mod h1:Key/HHGbYQEjjRnoVLTuO7wgozu4QRqkBdSu8zcYD8o=
-github.com/markkurossi/go-libs v0.0.0-20200114170848-c582f9e7e1bb h1:gM09R8JlqnJwxp9c/PSMerO09/n3ZSjKR+pA56ugXLk=
-github.com/markkurossi/go-libs v0.0.0-20200114170848-c582f9e7e1bb/go.mod h1:/G/3R4UDzX5sZ233raNbIj0q/hCe14N4k3h2NcRKiTU=
 github.com/markkurossi/go-libs v0.0.0-20200120182823-ed89d3b353ac h1:nJBZUf9RERs4bjiMLlNd9h7TurbZJPZMEYjbkggOBJA=
 github.com/markkurossi/go-libs v0.0.0-20200120182823-ed89d3b353ac/go.mod h1:/G/3R4UDzX5sZ233raNbIj0q/hCe14N4k3h2NcRKiTU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
