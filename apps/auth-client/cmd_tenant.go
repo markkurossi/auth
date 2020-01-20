@@ -1,7 +1,7 @@
 //
 // cmd_tenant.go
 //
-// Copyright (c) 2019 Markku Rossi
+// Copyright (c) 2020 Markku Rossi
 //
 // All rights reserved.
 //
@@ -13,8 +13,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/markkurossi/cicd/api/auth"
-	"github.com/markkurossi/cicd/api/secretmanager"
+	"github.com/markkurossi/cloudsdk/api/auth"
+	"github.com/markkurossi/cloudsdk/api/secretmanager"
 )
 
 var tenantCmds = map[string]func(store *auth.ClientStore, args []string) error{

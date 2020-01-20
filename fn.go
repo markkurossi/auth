@@ -1,7 +1,7 @@
 //
 // fn.go
 //
-// Copyright (c) 2019 Markku Rossi
+// Copyright (c) 2020 Markku Rossi
 //
 // All rights reserved.
 //
@@ -15,8 +15,8 @@ import (
 	"net/http"
 	"os"
 
-	api "github.com/markkurossi/cicd/api/auth"
-	"github.com/markkurossi/cicd/api/secretmanager"
+	api "github.com/markkurossi/cloudsdk/api/auth"
+	"github.com/markkurossi/cloudsdk/api/secretmanager"
 	"github.com/markkurossi/go-libs/fn"
 )
 

@@ -16,7 +16,7 @@ import (
 	"net/http"
 	"time"
 
-	api "github.com/markkurossi/cicd/api/auth"
+	api "github.com/markkurossi/cloudsdk/api/auth"
 	"github.com/markkurossi/go-libs/tlv"
 )
 
