@@ -114,10 +114,13 @@ func clientCredentialsGrant(w http.ResponseWriter, r *http.Request,
 	fmt.Printf("Granting access token for client %s (tenant %s)\n",
 		client.Name, client.TenantID)
 
+	now := time.Now()
+
 	tokenResponse(w, tlv.Values{
-		api.T_TENANT_ID: client.TenantID,
-		api.T_CLIENT_ID: client.ID,
-		api.T_CREATED:   uint64(time.Now().Unix()),
+		api.T_TENANT_ID:  client.TenantID,
+		api.T_CLIENT_ID:  client.ID,
+		api.T_NOT_BEFORE: uint64(now.Unix()),
+		api.T_NOT_AFTER:  uint64(now.Add(24 * time.Hour).Unix()),
 		api.T_SCOPE: tlv.Values{
 			api.SCOPE_ADMIN: true,
 		},
