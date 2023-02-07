@@ -3,16 +3,14 @@ module github.com/markkurossi/auth
 go 1.13
 
 require (
-	cloud.google.com/go v0.51.0 // indirect
-	cloud.google.com/go/firestore v1.1.1 // indirect
-	github.com/GoogleCloudPlatform/functions-framework-go v1.0.0
-	github.com/google/go-cmp v0.4.0 // indirect
-	github.com/markkurossi/cloudsdk v0.0.0-20200120182626-724b34dd56c0
+	cloud.google.com/go/functions v1.10.0 // indirect
+	github.com/GoogleCloudPlatform/functions-framework-go v1.6.1
+	github.com/cloudevents/sdk-go/v2 v2.13.0 // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/markkurossi/cloudsdk v0.0.0-20230207091824-919c90107183
 	github.com/markkurossi/go-libs v0.0.0-20200120182823-ed89d3b353ac
-	golang.org/x/exp v0.0.0-20200119233911-0405dc783f0a // indirect
-	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa // indirect
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
-	golang.org/x/sys v0.0.0-20200120151820-655fe14d7479 // indirect
-	golang.org/x/tools v0.0.0-20200119215504-eb0d8dd85bcc // indirect
-	google.golang.org/genproto v0.0.0-20200117163144-32f20d992d24 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	go.uber.org/atomic v1.10.0 // indirect
+	go.uber.org/multierr v1.9.0 // indirect
+	go.uber.org/zap v1.24.0 // indirect
 )
