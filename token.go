@@ -1,7 +1,7 @@
 //
 // token.go
 //
-// Copyright (c) 2019 Markku Rossi
+// Copyright (c) 2019-2023 Markku Rossi
 //
 // All rights reserved.
 //
@@ -20,6 +20,7 @@ import (
 	"github.com/markkurossi/go-libs/tlv"
 )
 
+// Token implements the "/token" URI handler.
 func Token(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		Errorf(w, ErrorInvalidRequest, "Invalid method %s", r.Method)

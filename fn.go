@@ -1,7 +1,7 @@
 //
 // fn.go
 //
-// Copyright (c) 2020 Markku Rossi
+// Copyright (c) 2020-2023 Markku Rossi
 //
 // All rights reserved.
 //
@@ -29,6 +29,7 @@ var (
 	signatureKey   ed25519.PrivateKey
 )
 
+// Fatalf reports a fatal error and exits the process.
 func Fatalf(format string, a ...interface{}) {
 	fmt.Printf(format, a...)
 	os.Exit(1)
@@ -64,12 +65,15 @@ func init() {
 	signatureKey = ed25519.PrivateKey(data)
 }
 
+// Auth implements the Google Cloud Functions entrypoint.
 func Auth(w http.ResponseWriter, r *http.Request) {
 	mux.ServeHTTP(w, r)
 }
 
+// OAuthError defines OAuth2 errors
 type OAuthError string
 
+// OAuth2 errors
 const (
 	ErrorInvalidRequest       OAuthError = "invalid_request"
 	ErrorInvalidClient        OAuthError = "invalid_client"
@@ -79,6 +83,7 @@ const (
 	ErrorInvalidScope         OAuthError = "invalid_scope"
 )
 
+// Errorf creates an HTTP error response.
 func Errorf(w http.ResponseWriter, oauthError OAuthError,
 	format string, a ...interface{}) {
 
@@ -97,6 +102,7 @@ func Errorf(w http.ResponseWriter, oauthError OAuthError,
 	w.Write(data)
 }
 
+// Error500f creates an HTTP 500 error response.
 func Error500f(w http.ResponseWriter, format string, a ...interface{}) {
 	http.Error(w, fmt.Sprintf(format, a...), http.StatusInternalServerError)
 }
